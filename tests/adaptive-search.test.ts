@@ -48,6 +48,11 @@ test('refines only the strongest coarse tile and uses image/png base64 files', a
   assert.equal(result.failures.length, 0);
   assert.equal(result.candidates.length, 7);
   assert.equal(result.candidates[0].depth, 1);
+  const topCandidateUrl = new URL(result.candidates[0].url);
+  assert.equal(topCandidateUrl.origin, 'https://www.google.com');
+  assert.equal(topCandidateUrl.pathname, '/maps/search/');
+  assert.equal(topCandidateUrl.searchParams.get('api'), '1');
+  assert.equal(topCandidateUrl.searchParams.get('query'), `${result.candidates[0].latitude},${result.candidates[0].longitude}`);
   assert.ok(requests.every((request) => request.files?.[0]?.type === 'image/png'));
   assert.ok(requests.every((request) => request.files?.[0]?.encoding === 'base64'));
   assert.ok(requests.every((request) => request.files?.[0]?.path.startsWith('tiles/')));

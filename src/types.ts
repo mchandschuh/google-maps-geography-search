@@ -60,6 +60,7 @@ export interface CandidateLocation {
   readonly depth: number;
   readonly latitude: number;
   readonly longitude: number;
+  readonly url: string;
   readonly score: number;
   readonly match: boolean;
   readonly reason: string;

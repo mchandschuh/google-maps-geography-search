@@ -81,12 +81,16 @@ export function assessmentRequest(request: SearchRequest, tile: Tile, imagePath:
 
 export function candidateFromAssessment(tile: Tile, assessment: TileAssessment): CandidateLocation {
   const location = locationInTile(tile, assessment.relativeLocation);
+  const url = new URL('https://www.google.com/maps/search/');
+  url.searchParams.set('api', '1');
+  url.searchParams.set('query', `${location.latitude},${location.longitude}`);
   return {
     tileId: tile.id,
     ...(tile.parentId ? { parentId: tile.parentId } : {}),
     depth: tile.depth,
     latitude: location.latitude,
     longitude: location.longitude,
+    url: url.toString(),
     score: assessment.score,
     match: assessment.match,
     reason: assessment.reason,

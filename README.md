@@ -70,7 +70,7 @@ Optional bounded-search controls:
 --model ID      Vision model (default: openai/gpt-5.6-luna)
 ```
 
-The output is JSON containing ranked candidates, approximate latitude/longitude, score, explanation, tile bounds, zoom, failures, and search counts.
+The output is JSON containing ranked candidates, approximate latitude/longitude, a `url` linking directly to each coordinate in Google Maps, score, explanation, tile bounds, zoom, failures, and search counts. Candidate links use the platform's cross-device Maps URLs format and do not require another API key to open.
 
 ## Google Static Maps behavior
 
