@@ -1,0 +1,28 @@
+{
+  "name": "google-maps-geography-search",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Adaptive satellite-image search with a structured vision model.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "satellite-search": "dist/cli.js"
+  },
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "start": "node dist/cli.js"
+  },
+  "dependencies": {
+    "llm": "file:../llm"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.9.3"
+  }
+}
