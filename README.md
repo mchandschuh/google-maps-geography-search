@@ -60,7 +60,7 @@ node dist/cli.js \
   --bbox 37.70,-122.52,37.78,-122.42
 ```
 
-The user does not provide a zoom level. Each tile gets an automatically calculated zoom that fits its bounds into a 640×640 Static Maps image. The default search starts with a 2×2 grid, retains promising tiles, and refines up to two levels while examining at most 28 tiles.
+The user does not provide a zoom level. Each tile gets an automatically calculated zoom that fits its bounds into a 640×640 Static Maps image. The default search starts with a 2×2 grid, retains every promising region, and follows the strongest region through up to six refinement levels while examining at most 48 tiles. Coarse candidates remain in the output while deeper candidates are added. Use `--refinement-beam N` to follow more strong regions per level when you prefer breadth over maximum depth.
 
 Optional bounded-search controls:
 
@@ -70,7 +70,7 @@ Optional bounded-search controls:
 --model ID      Vision model (default: openai/gpt-5.6-luna)
 ```
 
-The output is JSON containing ranked candidates, approximate latitude/longitude, a `url` linking directly to each coordinate in Google Maps, score, explanation, tile bounds, zoom, failures, and search counts. Candidate links use the platform's cross-device Maps URLs format and do not require another API key to open.
+The output is JSON containing all retained candidate regions, a separate `reportedSpots` list for fine-stage exact spots, approximate latitude/longitude, a `url` linking directly to each coordinate in Google Maps, decision/evidence fields, score, explanation, tile bounds, zoom, failures, and search counts. Candidate links use the platform's cross-device Maps URLs format and do not require another API key to open. A `refine` candidate means the region is promising but needs more resolution; a `report` candidate means the model believes a specific spot is visible.
 
 ## Google Static Maps behavior
 

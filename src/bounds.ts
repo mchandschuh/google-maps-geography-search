@@ -28,7 +28,7 @@ export function validateSearchOptions(options: Required<AdaptiveSearchOptions>):
   integerBetween('initialColumns', options.initialColumns, 1, 8);
   integerBetween('maxDepth', options.maxDepth, 0, 6);
   integerBetween('maxTiles', options.maxTiles, 1, 128);
-  integerBetween('retainTopK', options.retainTopK, 1, 16);
+  integerBetween('refinementBeamWidth', options.refinementBeamWidth, 1, 4);
   if (options.maxTiles < options.initialRows * options.initialColumns) {
     throw new Error('maxTiles must be at least the initial tile count.');
   }

@@ -18,8 +18,9 @@ Required environment variables:
   OPENROUTER_API_KEY    Key used by the llm provider
 
 Options:
-  --max-depth N         Refinement levels after the coarse pass (default: 2)
-  --max-tiles N         Maximum satellite tiles assessed (default: 28)
+  --max-depth N         Refinement levels after the coarse pass (default: 6)
+  --max-tiles N         Maximum satellite tiles assessed (default: 48)
+  --refinement-beam N   Strongest regions refined per level (default: 1)
   --model ID            Vision model (default: openai/gpt-5.6-luna)
   --help                Show this help
 
@@ -64,11 +65,12 @@ export async function runCli(args: readonly string[] = process.argv.slice(2)): P
   }
   const description = requiredOption(args, '--description');
   const area = parseBoundingBox(requiredOption(args, '--bbox'));
-  const maxDepth = integerOption(args, '--max-depth', 2);
-  const maxTiles = integerOption(args, '--max-tiles', 28);
+  const maxDepth = integerOption(args, '--max-depth', 6);
+  const maxTiles = integerOption(args, '--max-tiles', 48);
+  const refinementBeamWidth = integerOption(args, '--refinement-beam', 1);
   const model = optionValue(args, '--model') ?? 'openai/gpt-5.6-luna';
   const imagery = new GoogleStaticMapsSatelliteClient({ apiKey: process.env.GOOGLE_MAPS_API_KEY ?? '' });
-  const result = await searchArea({ description, area }, { imagery, llm: llmProvider }, { maxDepth, maxTiles, model });
+  const result = await searchArea({ description, area }, { imagery, llm: llmProvider }, { maxDepth, maxTiles, refinementBeamWidth, model });
   console.log(JSON.stringify(result, null, 2));
 }
 

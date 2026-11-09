@@ -34,20 +34,40 @@ export interface SearchRequest {
   readonly area: BoundingBox;
 }
 
+export type SearchStage = 'coarse' | 'intermediate' | 'fine';
+
+export type TileDecision = 'discard' | 'refine' | 'report';
+
+export type TileEvidence =
+  | 'water_feature'
+  | 'stream_corridor'
+  | 'shoreline'
+  | 'road_or_clearing'
+  | 'parking_geometry'
+  | 'tree_line_deformation'
+  | 'open_sky'
+  | 'terrain_access'
+  | 'negative_water_evidence'
+  | 'negative_access_evidence'
+  | 'negative_sky_evidence'
+  | 'uncertain';
+
 export interface AdaptiveSearchOptions {
   readonly initialRows?: number;
   readonly initialColumns?: number;
   readonly maxDepth?: number;
   readonly maxTiles?: number;
-  readonly retainTopK?: number;
+  readonly refinementBeamWidth?: number;
   readonly minimumScore?: number;
   readonly model?: string;
 }
 
 export interface TileAssessment {
+  readonly decision: TileDecision;
   readonly match: boolean;
   readonly score: number;
   readonly reason: string;
+  readonly evidence: readonly TileEvidence[];
   readonly relativeLocation: {
     readonly x: number;
     readonly y: number;
@@ -58,12 +78,15 @@ export interface CandidateLocation {
   readonly tileId: string;
   readonly parentId?: string;
   readonly depth: number;
+  readonly stage: SearchStage;
+  readonly decision: Exclude<TileDecision, 'discard'>;
   readonly latitude: number;
   readonly longitude: number;
   readonly url: string;
   readonly score: number;
   readonly match: boolean;
   readonly reason: string;
+  readonly evidence: readonly TileEvidence[];
   readonly tileBounds: BoundingBox;
   readonly zoom: number;
 }
@@ -78,6 +101,7 @@ export interface SearchResult {
   readonly description: string;
   readonly area: BoundingBox;
   readonly candidates: readonly CandidateLocation[];
+  readonly reportedSpots: readonly CandidateLocation[];
   readonly failures: readonly TileFailure[];
   readonly tilesExamined: number;
   readonly refinementLevels: number;

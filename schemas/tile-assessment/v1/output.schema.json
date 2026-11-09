@@ -6,12 +6,28 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
+    "decision",
     "match",
     "score",
     "reason",
+    "evidence",
     "relativeLocation"
   ],
   "properties": {
+    "decision": {
+      "type": "string",
+      "enum": [
+        "discard",
+        "refine",
+        "report"
+      ],
+      "description": "Whether to discard this tile, retain it and inspect smaller child tiles, or report a specific visible spot from this tile.",
+      "examples": [
+        "refine",
+        "report",
+        "discard"
+      ]
+    },
     "match": {
       "type": "boolean",
       "description": "Whether the described feature appears to be visibly present in the attached satellite image.",
@@ -39,6 +55,43 @@
       "examples": [
         "Lake Nockamixon is visible with cleared access areas near the shoreline, but individual parking spaces are not distinguishable at this scale.",
         "No qualifying water-adjacent clearing is visible in this tile."
+      ]
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "description": "Visible evidence supporting the decision. Do not include evidence that cannot be seen in the image.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "water_feature",
+          "stream_corridor",
+          "shoreline",
+          "road_or_clearing",
+          "parking_geometry",
+          "tree_line_deformation",
+          "open_sky",
+          "terrain_access",
+          "negative_water_evidence",
+          "negative_access_evidence",
+          "negative_sky_evidence",
+          "uncertain"
+        ],
+        "description": "Controlled visual evidence category.",
+        "examples": [
+          "water_feature",
+          "road_or_clearing",
+          "uncertain"
+        ]
+      },
+      "examples": [
+        [
+          "water_feature",
+          "shoreline",
+          "road_or_clearing"
+        ]
       ]
     },
     "relativeLocation": {
@@ -85,9 +138,15 @@
   },
   "examples": [
     {
+      "decision": "refine",
       "match": true,
       "score": 0.58,
       "reason": "Lake Nockamixon is visible with cleared access areas near the shoreline, but individual parking spaces are not distinguishable at this scale.",
+      "evidence": [
+        "water_feature",
+        "shoreline",
+        "road_or_clearing"
+      ],
       "relativeLocation": {
         "x": 0.25,
         "y": 0.75

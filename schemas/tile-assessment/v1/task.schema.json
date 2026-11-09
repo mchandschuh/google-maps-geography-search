@@ -7,6 +7,7 @@
   "additionalProperties": false,
   "required": [
     "description",
+    "searchStage",
     "tile"
   ],
   "properties": {
@@ -18,6 +19,20 @@
       "examples": [
         "Find a parking spot next to water near or at Lake Nockamixon in Pennsylvania.",
         "Find a circular dirt clearing beside a tree line."
+      ]
+    },
+    "searchStage": {
+      "type": "string",
+      "enum": [
+        "coarse",
+        "intermediate",
+        "fine"
+      ],
+      "description": "The current inference stage. Coarse and intermediate stages identify regions worth refining; fine stage attempts to localize an actual spot.",
+      "examples": [
+        "coarse",
+        "intermediate",
+        "fine"
       ]
     },
     "tile": {
@@ -178,6 +193,7 @@
   "examples": [
     {
       "description": "Find a parking spot next to water near or at Lake Nockamixon in Pennsylvania.",
+      "searchStage": "intermediate",
       "tile": {
         "id": "r2c2-ne",
         "depth": 1,

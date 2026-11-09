@@ -11,9 +11,11 @@ const response = (score: number): LlmResponse => ({
     $type: 'object',
     schema: { name: 'assessment' },
     value: {
+      decision: score >= 0.8 ? 'refine' : 'report',
       match: score >= 0.5,
       score,
       reason: 'The tile is consistent with the description.',
+      evidence: ['water_feature', 'road_or_clearing'],
       relativeLocation: { x: 0.25, y: 0.75 },
     },
   },
@@ -22,7 +24,7 @@ const response = (score: number): LlmResponse => ({
   errors: [],
 });
 
-test('refines only the strongest coarse tile and uses image/png base64 files', async () => {
+test('retains likely tiles, refines the strongest region, and uses image/png base64 files', async () => {
   const requests: LlmRequest[] = [];
   const configurationRoots: string[] = [];
   const imagery: SatelliteImageClient = {
@@ -41,13 +43,15 @@ test('refines only the strongest coarse tile and uses image/png base64 files', a
   const result = await searchArea(
     { description: 'a circular clearing', area: { minLatitude: 0, minLongitude: 0, maxLatitude: 1, maxLongitude: 1 } },
     { imagery, llm },
-    { maxDepth: 1, maxTiles: 8, retainTopK: 1, minimumScore: 0.5 },
+    { maxDepth: 1, maxTiles: 8, refinementBeamWidth: 1, minimumScore: 0.5 },
   );
   assert.equal(result.tilesExamined, 8);
   assert.equal(result.refinementLevels, 1);
   assert.equal(result.failures.length, 0);
-  assert.equal(result.candidates.length, 7);
-  assert.equal(result.candidates[0].depth, 1);
+  assert.equal(result.candidates.length, 8);
+  assert.equal(result.reportedSpots.length, 3);
+  assert.ok(result.candidates.some((candidate) => candidate.depth === 1));
+  assert.ok(result.candidates.every((candidate) => candidate.decision !== 'discard'));
   const topCandidateUrl = new URL(result.candidates[0].url);
   assert.equal(topCandidateUrl.origin, 'https://www.google.com');
   assert.equal(topCandidateUrl.pathname, '/maps/search/');
@@ -91,7 +95,7 @@ test('keeps a coarse candidate when a refinement child fails', async () => {
   const result = await searchArea(
     { description: 'a clearing', area: { minLatitude: 0, minLongitude: 0, maxLatitude: 1, maxLongitude: 1 } },
     { imagery, llm },
-    { maxDepth: 1, maxTiles: 8, retainTopK: 1 },
+    { maxDepth: 1, maxTiles: 8 },
   );
   assert.equal(result.failures.some((failure) => failure.tileId === 'r1c1-ne'), true);
   assert.equal(result.candidates.some((candidate) => candidate.tileId === 'r1c1'), true);
