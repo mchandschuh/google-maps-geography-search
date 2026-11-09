@@ -72,6 +72,12 @@ export interface TileAssessment {
     readonly x: number;
     readonly y: number;
   };
+  readonly targetBounds: {
+    readonly west: number;
+    readonly north: number;
+    readonly east: number;
+    readonly south: number;
+  };
 }
 
 export interface CandidateLocation {
@@ -87,6 +93,7 @@ export interface CandidateLocation {
   readonly match: boolean;
   readonly reason: string;
   readonly evidence: readonly TileEvidence[];
+  readonly targetBounds: TileAssessment['targetBounds'];
   readonly tileBounds: BoundingBox;
   readonly zoom: number;
 }

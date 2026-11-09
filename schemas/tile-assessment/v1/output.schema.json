@@ -11,7 +11,8 @@
     "score",
     "reason",
     "evidence",
-    "relativeLocation"
+    "relativeLocation",
+    "targetBounds"
   ],
   "properties": {
     "decision": {
@@ -51,7 +52,7 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 500,
-      "description": "Concise evidence-based explanation grounded in visible image content; do not claim details that cannot be seen.",
+      "description": "Concise evidence-based explanation grounded in visible image content. For refine, explain why the region merits further inspection; for report, explain why the exact target is visible and why relativeLocation is placed on it.",
       "examples": [
         "Lake Nockamixon is visible with cleared access areas near the shoreline, but individual parking spaces are not distinguishable at this scale.",
         "No qualifying water-adjacent clearing is visible in this tile."
@@ -97,7 +98,7 @@
     "relativeLocation": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Estimated feature location within the attached image using normalized image coordinates.",
+      "description": "Estimated target location within the attached image using normalized image coordinates. For refine, identify the promising subregion to inspect next. For report, identify the exact requested target itself, not nearby context or the tile center.",
       "required": [
         "x",
         "y"
@@ -134,6 +135,55 @@
           "y": 0.75
         }
       ]
+    },
+    "targetBounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Approximate normalized image bounds of the visible target or promising subregion. west/east are horizontal coordinates and north/south are vertical coordinates. For report, these bounds must enclose the exact visible target.",
+      "required": [
+        "west",
+        "north",
+        "east",
+        "south"
+      ],
+      "properties": {
+        "west": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Left/west edge of the target in normalized image coordinates.",
+          "examples": [0.1, 0.4]
+        },
+        "north": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Top/north edge of the target in normalized image coordinates.",
+          "examples": [0.2, 0.5]
+        },
+        "east": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Right/east edge of the target in normalized image coordinates.",
+          "examples": [0.6, 0.9]
+        },
+        "south": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Bottom/south edge of the target in normalized image coordinates.",
+          "examples": [0.5, 0.8]
+        }
+      },
+      "examples": [
+        {
+          "west": 0.35,
+          "north": 0.25,
+          "east": 0.55,
+          "south": 0.4
+        }
+      ]
     }
   },
   "examples": [
@@ -150,6 +200,12 @@
       "relativeLocation": {
         "x": 0.25,
         "y": 0.75
+      },
+      "targetBounds": {
+        "west": 0.15,
+        "north": 0.6,
+        "east": 0.35,
+        "south": 0.9
       }
     }
   ]

@@ -17,6 +17,7 @@ const response = (score: number): LlmResponse => ({
       reason: 'The tile is consistent with the description.',
       evidence: ['water_feature', 'road_or_clearing'],
       relativeLocation: { x: 0.25, y: 0.75 },
+      targetBounds: { west: 0.1, north: 0.6, east: 0.4, south: 0.9 },
     },
   },
   failedAttempts: 0,
