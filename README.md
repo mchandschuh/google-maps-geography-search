@@ -21,7 +21,7 @@ This is a screening tool, not survey-grade geolocation. Satellite image date, re
 - `OPENROUTER_API_KEY`
 - The sibling local [`llm`](https://github.com/mchandschuh/llm) checkout at `../llm`
 
-The searcher imports `complete` and `ILlmProvider` from the public `llm` package. Downloaded PNGs are written to a temporary workspace and supplied through `request.files` with `type: "image/png"`; the `llm` package reads them as binary, encodes them as base64, and sends them to OpenRouter as `image_url` parts.
+The searcher imports `complete` and `ILlmProvider` from the public `llm` package. Downloaded PNGs are written to a temporary workspace and supplied through `request.files` with `type: "image/png"`; the `llm` package reads them as binary, encodes them as base64, and sends them to OpenRouter as `image_url` parts. The task and output contracts are versioned under `schemas/tile-assessment/v1/`; both schemas include descriptions/examples and are passed to `llm.complete()` for prompt context and validation.
 
 ## Setup
 

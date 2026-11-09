@@ -1,0 +1,198 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.handschuh.dev/google-maps-geography-search/tile-assessment-task/v1",
+  "title": "Satellite Tile Assessment Task v1",
+  "description": "The structured task supplied to the vision model for assessing one satellite-image tile against a natural-language search description.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "description",
+    "tile"
+  ],
+  "properties": {
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000,
+      "description": "Natural-language description of the feature or location being searched for.",
+      "examples": [
+        "Find a parking spot next to water near or at Lake Nockamixon in Pennsylvania.",
+        "Find a circular dirt clearing beside a tree line."
+      ]
+    },
+    "tile": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Geographic and image metadata for the satellite tile attached to this task.",
+      "required": [
+        "id",
+        "depth",
+        "bounds",
+        "center",
+        "zoom"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable search-tree identifier for this tile.",
+          "examples": [
+            "r2c2",
+            "r2c2-ne"
+          ]
+        },
+        "depth": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 6,
+          "description": "Number of refinement levels below the initial coarse grid.",
+          "examples": [
+            0,
+            1,
+            2
+          ]
+        },
+        "bounds": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Inclusive geographic bounds of the tile in decimal degrees.",
+          "required": [
+            "minLatitude",
+            "minLongitude",
+            "maxLatitude",
+            "maxLongitude"
+          ],
+          "properties": {
+            "minLatitude": {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90,
+              "description": "Southern latitude boundary in decimal degrees.",
+              "examples": [
+                40.455
+              ]
+            },
+            "minLongitude": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180,
+              "description": "Western longitude boundary in decimal degrees.",
+              "examples": [
+                -75.2
+              ]
+            },
+            "maxLatitude": {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90,
+              "description": "Northern latitude boundary in decimal degrees.",
+              "examples": [
+                40.49
+              ]
+            },
+            "maxLongitude": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180,
+              "description": "Eastern longitude boundary in decimal degrees.",
+              "examples": [
+                -75.14
+              ]
+            }
+          },
+          "examples": [
+            {
+              "minLatitude": 40.455,
+              "minLongitude": -75.2,
+              "maxLatitude": 40.49,
+              "maxLongitude": -75.14
+            }
+          ]
+        },
+        "center": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Center point of the tile in decimal degrees.",
+          "required": [
+            "latitude",
+            "longitude"
+          ],
+          "properties": {
+            "latitude": {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90,
+              "description": "Tile-center latitude in decimal degrees.",
+              "examples": [
+                40.4725
+              ]
+            },
+            "longitude": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180,
+              "description": "Tile-center longitude in decimal degrees.",
+              "examples": [
+                -75.17
+              ]
+            }
+          },
+          "examples": [
+            {
+              "latitude": 40.4725,
+              "longitude": -75.17
+            }
+          ]
+        },
+        "zoom": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 21,
+          "description": "Google Static Maps zoom selected automatically for this tile.",
+          "examples": [
+            12,
+            13,
+            14
+          ]
+        }
+      },
+      "examples": [
+        {
+          "id": "r2c2-ne",
+          "depth": 1,
+          "bounds": {
+            "minLatitude": 40.455,
+            "minLongitude": -75.2,
+            "maxLatitude": 40.49,
+            "maxLongitude": -75.14
+          },
+          "center": {
+            "latitude": 40.4725,
+            "longitude": -75.17
+          },
+          "zoom": 13
+        }
+      ]
+    }
+  },
+  "examples": [
+    {
+      "description": "Find a parking spot next to water near or at Lake Nockamixon in Pennsylvania.",
+      "tile": {
+        "id": "r2c2-ne",
+        "depth": 1,
+        "bounds": {
+          "minLatitude": 40.455,
+          "minLongitude": -75.2,
+          "maxLatitude": 40.49,
+          "maxLongitude": -75.14
+        },
+        "center": {
+          "latitude": 40.4725,
+          "longitude": -75.17
+        },
+        "zoom": 13
+      }
+    }
+  ]
+}

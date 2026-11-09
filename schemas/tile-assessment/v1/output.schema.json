@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.handschuh.dev/google-maps-geography-search/tile-assessment-output/v1",
+  "title": "Satellite Tile Assessment Output v1",
+  "description": "A structured vision-model assessment of whether a described feature appears in one satellite-image tile and where it appears within that image.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "match",
+    "score",
+    "reason",
+    "relativeLocation"
+  ],
+  "properties": {
+    "match": {
+      "type": "boolean",
+      "description": "Whether the described feature appears to be visibly present in the attached satellite image.",
+      "examples": [
+        true,
+        false
+      ]
+    },
+    "score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Estimated likelihood that the described feature is visible in this tile, from 0 to 1. This is a ranking signal, not proof.",
+      "examples": [
+        0.2,
+        0.58,
+        0.97
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "description": "Concise evidence-based explanation grounded in visible image content; do not claim details that cannot be seen.",
+      "examples": [
+        "Lake Nockamixon is visible with cleared access areas near the shoreline, but individual parking spaces are not distinguishable at this scale.",
+        "No qualifying water-adjacent clearing is visible in this tile."
+      ]
+    },
+    "relativeLocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Estimated feature location within the attached image using normalized image coordinates.",
+      "required": [
+        "x",
+        "y"
+      ],
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "West-to-east image position: 0 is the west/left edge and 1 is the east/right edge.",
+          "examples": [
+            0,
+            0.25,
+            0.5,
+            1
+          ]
+        },
+        "y": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "North-to-south image position: 0 is the north/top edge and 1 is the south/bottom edge.",
+          "examples": [
+            0,
+            0.4,
+            0.75,
+            1
+          ]
+        }
+      },
+      "examples": [
+        {
+          "x": 0.25,
+          "y": 0.75
+        }
+      ]
+    }
+  },
+  "examples": [
+    {
+      "match": true,
+      "score": 0.58,
+      "reason": "Lake Nockamixon is visible with cleared access areas near the shoreline, but individual parking spaces are not distinguishable at this scale.",
+      "relativeLocation": {
+        "x": 0.25,
+        "y": 0.75
+      }
+    }
+  ]
+}

@@ -1,28 +1,11 @@
+import { readFile } from 'node:fs/promises';
 import { REQUEST_SCHEMA } from 'llm';
 import type { ILlmProvider, LlmResponse } from 'llm';
 import { locationInTile } from './bounds.js';
 import type { CandidateLocation, SearchRequest, SatelliteImage, Tile, TileAssessment } from './types.js';
 
-const ASSESSMENT_SCHEMA = JSON.stringify({
-  $id: 'https://schemas.handschuh.dev/google-maps-geography-search/tile-assessment/v1',
-  type: 'object',
-  additionalProperties: false,
-  required: ['match', 'score', 'reason', 'relativeLocation'],
-  properties: {
-    match: { type: 'boolean' },
-    score: { type: 'number', minimum: 0, maximum: 1 },
-    reason: { type: 'string', minLength: 1, maxLength: 500 },
-    relativeLocation: {
-      type: 'object',
-      additionalProperties: false,
-      required: ['x', 'y'],
-      properties: {
-        x: { type: 'number', minimum: 0, maximum: 1 },
-        y: { type: 'number', minimum: 0, maximum: 1 },
-      },
-    },
-  },
-});
+const TASK_SCHEMA = await readFile(new URL('../schemas/tile-assessment/v1/task.schema.json', import.meta.url), 'utf8');
+const OUTPUT_SCHEMA = await readFile(new URL('../schemas/tile-assessment/v1/output.schema.json', import.meta.url), 'utf8');
 
 function assessmentValue(response: LlmResponse): TileAssessment {
   if (response.status !== 'success' || !response.output || response.output.$type !== 'object') {
@@ -60,6 +43,7 @@ export function assessmentRequest(request: SearchRequest, tile: Tile, imagePath:
         zoom: tile.zoom,
       },
     }),
+    taskSchema: TASK_SCHEMA,
     systemPrompt: [
       'You are a careful satellite-image search assistant.',
       'Compare the user description with the attached satellite image.',
@@ -75,7 +59,7 @@ export function assessmentRequest(request: SearchRequest, tile: Tile, imagePath:
       encoding: 'base64' as const,
       purpose: 'Satellite imagery for adaptive location search.',
     }],
-    outputSchema: ASSESSMENT_SCHEMA,
+    outputSchema: OUTPUT_SCHEMA,
   };
 }
 
@@ -105,4 +89,4 @@ export async function assessTile(llm: ILlmProvider, request: SearchRequest, tile
   return { assessment, candidate: candidateFromAssessment(tile, assessment), response };
 }
 
-export { ASSESSMENT_SCHEMA };
+export { OUTPUT_SCHEMA, TASK_SCHEMA };

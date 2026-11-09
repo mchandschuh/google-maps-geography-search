@@ -56,6 +56,9 @@ test('refines only the strongest coarse tile and uses image/png base64 files', a
   assert.ok(requests.every((request) => request.files?.[0]?.type === 'image/png'));
   assert.ok(requests.every((request) => request.files?.[0]?.encoding === 'base64'));
   assert.ok(requests.every((request) => request.files?.[0]?.path.startsWith('tiles/')));
+  assert.ok(requests.every((request) => request.taskSchema?.includes('Geographic and image metadata')));
+  assert.ok(requests.every((request) => request.outputSchema?.includes('North-to-south image position')));
+  assert.ok(requests.every((request) => request.outputSchema?.includes('examples')));
   assert.ok(configurationRoots.every((root) => root.includes('google-maps-geography-search-')));
 });
 
