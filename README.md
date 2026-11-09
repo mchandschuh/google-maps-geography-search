@@ -19,37 +19,31 @@ This is a screening tool, not survey-grade geolocation. Satellite image date, re
 - A Google Cloud project with billing enabled and Maps Static API enabled
 - `GOOGLE_MAPS_API_KEY`
 - `OPENROUTER_API_KEY`
-- The sibling local [`llm`](https://github.com/mchandschuh/llm) checkout at `../llm`
+- The public [`llm`](https://github.com/mchandschuh/llm) GitHub repository, pinned in `package.json`
 
-The searcher imports `complete` and `ILlmProvider` from the public `llm` package. Downloaded PNGs are written to a temporary workspace and supplied through `request.files` with `type: "image/png"`; the `llm` package reads them as binary, encodes them as base64, and sends them to OpenRouter as `image_url` parts. The task and output contracts are versioned under `schemas/tile-assessment/v1/`; both schemas include descriptions/examples and are passed to `llm.complete()` for prompt context and validation.
+The searcher imports `complete` and `ILlmProvider` from the public [`llm`](https://github.com/mchandschuh/llm) package. The dependency builds its TypeScript library during installation. Downloaded PNGs are written to a temporary workspace and supplied through `request.files` with `type: "image/png"`; the `llm` package reads them as binary, encodes them as base64, and sends them to OpenRouter as `image_url` parts. The task and output contracts are versioned under `schemas/tile-assessment/v1/`; both schemas include descriptions/examples and are passed to `llm.complete()` for prompt context and validation.
 
 ## Setup
 
-Build the sibling LLM package first:
+Install and validate the repository:
 
 ```bash
-cd /home/michael/src/github/llm
 npm ci
-npm run build
-```
-
-Then install and validate this repository:
-
-```bash
-cd /home/michael/src/github/google-maps-geography-search
-npm install
 npm run typecheck
 npm test
 npm run build
 ```
 
+If your npm configuration disables dependency lifecycle scripts, enable the
+`llm` dependency's build/prepare script before running the typecheck or build.
+
 ## Run
 
-Load the OpenRouter credentials and provide a Google Maps key:
+Export the credentials in your shell. Do not commit them:
 
 ```bash
-source /home/michael/src/shell/environment/openrouter
-export GOOGLE_MAPS_API_KEY='...'
+export GOOGLE_MAPS_API_KEY="..."
+export OPENROUTER_API_KEY="..."
 ```
 
 Run a search:
@@ -65,8 +59,9 @@ The user does not provide a zoom level. Each tile gets an automatically calculat
 Optional bounded-search controls:
 
 ```text
---max-depth N   Refinement levels after the coarse pass (default: 2)
---max-tiles N   Maximum satellite tiles assessed (default: 28)
+--max-depth N   Refinement levels after the coarse pass (default: 6)
+--max-tiles N   Maximum satellite tiles assessed (default: 48)
+--refinement-beam N  Strongest regions refined per level (default: 1)
 --model ID      Vision model (default: openai/gpt-5.6-luna)
 ```
 

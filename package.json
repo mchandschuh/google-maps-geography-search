@@ -18,7 +18,7 @@
     "start": "node dist/cli.js"
   },
   "dependencies": {
-    "llm": "file:../llm"
+    "llm": "git+https://github.com/mchandschuh/llm.git#6449d1bcadc4b5439d0dc8144b75d107d2cd9d10"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
